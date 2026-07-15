@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>六爻排盘 - 周易占卜</title>
+    <title>六爻排盘 · 周易占卜</title>
     <style>
         :root {
-            --bg: #0d0d14;
-            --bg-card: #1a1a28;
-            --bg-card2: #1f1f30;
-            --gold: #c9a96e;
-            --gold-light: #d4b87a;
-            --gold-dark: #a67c3d;
-            --text: #e0dcd0;
-            --text-secondary: #a09b8c;
-            --text-dim: #6b6558;
-            --border: #2a2a3a;
-            --accent-red: #c0392b;
-            --accent-green: #5d8a5e;
-            --shadow-gold: 0 0 30px rgba(201, 169, 110, 0.15);
-            --radius: 16px;
+            --bg: #0b0b12;
+            --bg-card: #13141f;
+            --bg-card2: #1a1b2a;
+            --gold: #c8a45c;
+            --gold-light: #e0c878;
+            --gold-dark: #8b6914;
+            --gold-pale: #d4c098;
+            --text: #ddd8cc;
+            --text-secondary: #a09a8a;
+            --text-dim: #6b6554;
+            --border: #252535;
+            --border-gold: rgba(200, 164, 92, 0.35);
+            --red: #d4644a;
+            --red-glow: rgba(212, 100, 74, 0.5);
+            --radius: 18px;
             --radius-sm: 10px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --font-cn: 'Noto Serif SC', 'STSong', 'Songti SC', 'SimSun', 'KaiTi', serif;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-cn: 'Noto Serif SC', 'STSong', 'Songti SC', 'SimSun', 'KaiTi', 'LiSu', serif;
             --font-sans: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
         }
 
@@ -35,23 +36,24 @@
         body {
             background: var(--bg);
             background-image:
-                radial-gradient(ellipse at 50% 0%, rgba(201, 169, 110, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(180, 140, 100, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 20% 80%, rgba(160, 120, 70, 0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 50% 15%, rgba(200, 164, 92, 0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 25% 70%, rgba(180, 140, 80, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 60%, rgba(160, 120, 60, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(200, 160, 90, 0.05) 0%, transparent 40%);
             color: var(--text);
             font-family: var(--font-sans);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px;
+            padding: 16px;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* 背景装饰纹样 */
-        body::before {
-            content: '';
+        /* 浮动粒子 */
+        .particles-container {
             position: fixed;
             top: 0;
             left: 0;
@@ -59,505 +61,727 @@
             bottom: 0;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.025;
-            background-image: repeating-linear-gradient(0deg,
-                    transparent,
-                    transparent 40px,
-                    rgba(201, 169, 110, 0.5) 40px,
-                    rgba(201, 169, 110, 0.5) 41px),
-                repeating-linear-gradient(90deg,
-                    transparent,
-                    transparent 40px,
-                    rgba(201, 169, 110, 0.5) 40px,
-                    rgba(201, 169, 110, 0.5) 41px);
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            animation: floatUp 6s ease-in infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            30% {
+                opacity: 0.4;
+            }
+            60% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.4);
+                opacity: 0;
+            }
         }
 
         .container {
             position: relative;
             z-index: 1;
-            max-width: 560px;
+            max-width: 600px;
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding-bottom: 60px;
+            gap: 18px;
+            padding-bottom: 50px;
         }
 
-        /* 顶部标题 */
+        /* ========== 头部 ========== */
         .header {
             text-align: center;
-            padding: 10px 0;
+            padding: 8px 0 2px;
         }
-        .header .icon-taiji {
+        .taiji-wrapper {
             display: inline-block;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: conic-gradient(from 90deg, #1a1a28 0% 50%, #c9a96e 50% 100%);
             position: relative;
-            margin-bottom: 12px;
-            box-shadow: var(--shadow-gold);
-            animation: taiji-rotate 20s linear infinite;
+            margin-bottom: 10px;
         }
-        .header .icon-taiji::after {
+        .taiji {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(from 90deg, #1a1a28 0% 50%, var(--gold) 50% 100%);
+            animation: taijiSpin 24s linear infinite;
+            box-shadow: 0 0 40px rgba(200, 164, 92, 0.25), 0 0 80px rgba(200, 164, 92, 0.08);
+            position: relative;
+        }
+        .taiji::before {
             content: '';
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: #c9a96e;
-            top: 20px;
+            background: var(--gold);
+            top: 21px;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 0 0 6px #1a1a28;
+            box-shadow: 0 0 0 7px #1a1a28;
+            z-index: 2;
         }
-        @keyframes taiji-rotate {
-            from {
-                transform: rotate(0deg);
-            }
+        .taiji::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1a1a28;
+            top: 21px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-21px);
+            box-shadow: 0 0 0 7px var(--gold);
+            z-index: 2;
+        }
+        @keyframes taijiSpin {
             to {
                 transform: rotate(360deg);
             }
         }
+        .taiji-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(200, 164, 92, 0.2);
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+        @keyframes ringPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
         .header h1 {
             font-family: var(--font-cn);
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             color: var(--gold-light);
-            text-shadow: 0 0 40px rgba(201, 169, 110, 0.3);
+            text-shadow: 0 0 60px rgba(200, 164, 92, 0.35);
+            margin: 0;
         }
         .header .subtitle {
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             color: var(--text-dim);
-            letter-spacing: 0.15em;
+            letter-spacing: 0.18em;
             margin-top: 2px;
+            font-family: var(--font-cn);
         }
 
-        /* 卡片 */
+        /* ========== 卡片 ========== */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 24px 28px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
+            padding: 22px 24px;
+            box-shadow: 0 8px 36px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            transition: var(--transition);
         }
         .card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
+            left: 20px;
+            right: 20px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
-            opacity: 0.5;
+            background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
+            opacity: 0.7;
         }
         .card:hover {
-            border-color: rgba(201, 169, 110, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), var(--shadow-gold);
+            border-color: rgba(200, 164, 92, 0.3);
+            box-shadow: 0 14px 44px rgba(0, 0, 0, 0.6), 0 0 30px rgba(200, 164, 92, 0.08);
         }
 
-        /* 摇卦区域 */
-        .shake-area {
+        /* ========== 摇卦区域 ========== */
+        .shake-stage {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 10px 0;
+            gap: 22px;
+            padding: 8px 0 4px;
+            position: relative;
         }
-        .coins-display {
+        .coins-platform {
+            position: relative;
+            width: 100%;
+            height: 130px;
             display: flex;
-            gap: 16px;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            min-height: 90px;
+            perspective: 600px;
+        }
+        .coins-tray {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
         }
         .coin {
-            width: 64px;
-            height: 64px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
-            background: linear-gradient(145deg, #e8d5a3, #c4a265, #a07830);
-            border: 3px solid #8b6914;
+            background: linear-gradient(145deg, #f0deb0, #c9a050, #9a7028);
+            border: 3px solid #7a5818;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #5c3d0e;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            transition: all 0.4s ease;
+            color: #4a3008;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.35);
             cursor: default;
             user-select: none;
             position: relative;
             font-family: var(--font-cn);
+            transition: transform 0.2s, box-shadow 0.3s;
+            will-change: transform;
         }
-        .coin.rolling {
-            animation: coin-roll 0.6s ease-out;
+        .coin::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0, 0, 0, 0.25);
+            pointer-events: none;
         }
         .coin.heads {
-            background: linear-gradient(145deg, #f0e0b8, #d4b060, #b08828);
+            background: linear-gradient(145deg, #faf0d0, #ddc070, #b09030);
             border-color: #8b6914;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 0 24px rgba(201, 169, 110, 0.4);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.4), 0 0 30px rgba(220, 180, 80, 0.35);
         }
         .coin.tails {
-            background: linear-gradient(145deg, #c8b888, #a08040, #705020);
-            border-color: #6b4e10;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(145deg, #c8b078, #9a8040, #685020);
+            border-color: #5a3e10;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.2);
         }
-        @keyframes coin-roll {
+        .coin.tossing {
+            animation: coinToss 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        @keyframes coinToss {
             0% {
-                transform: translateY(-60px) rotateX(0deg) rotateY(0deg);
-                opacity: 0.6;
+                transform: translateY(0) rotateX(0) rotateY(0) scale(1);
             }
-            30% {
-                transform: translateY(-30px) rotateX(360deg) rotateY(180deg);
-                opacity: 1;
+            15% {
+                transform: translateY(-70px) rotateX(200deg) rotateY(60deg) scale(1.1);
             }
-            60% {
-                transform: translateY(-10px) rotateX(720deg) rotateY(360deg);
+            40% {
+                transform: translateY(-50px) rotateX(520deg) rotateY(220deg) scale(1.05);
+            }
+            65% {
+                transform: translateY(-18px) rotateX(800deg) rotateY(400deg) scale(1.02);
+            }
+            85% {
+                transform: translateY(6px) rotateX(960deg) rotateY(500deg) scale(0.96);
             }
             100% {
-                transform: translateY(0) rotateX(900deg) rotateY(540deg);
+                transform: translateY(0) rotateX(1080deg) rotateY(540deg) scale(1);
+            }
+        }
+        .coin.land-bounce {
+            animation: landBounce 0.4s ease-out;
+        }
+        @keyframes landBounce {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            30% {
+                transform: translateY(-14px) scale(1.06);
+            }
+            60% {
+                transform: translateY(-4px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+        /* 铜钱光晕 */
+        .coin-glow {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 200, 80, 0.35) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: glowFade 0.7s ease-out forwards;
+        }
+        @keyframes glowFade {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.8);
+                opacity: 0;
             }
         }
 
+        .shake-info {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-family: var(--font-cn);
+            letter-spacing: 0.04em;
+            min-height: 22px;
+            transition: color 0.3s;
+        }
+        .shake-info .highlight-num {
+            color: var(--gold-light);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .shake-progress {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .shake-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+        .shake-dot.filled {
+            background: var(--gold);
+            box-shadow: 0 0 10px rgba(200, 164, 92, 0.6);
+        }
+        .shake-dot.moving-dot {
+            background: var(--red);
+            box-shadow: 0 0 12px var(--red-glow);
+            animation: dotPulse 0.8s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 8px var(--red-glow);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--red-glow), 0 0 32px rgba(212, 100, 74, 0.7);
+            }
+        }
+
+        /* ========== 按钮 ========== */
         .btn {
-            padding: 14px 36px;
-            font-size: 1.05rem;
+            padding: 13px 32px;
+            font-size: 1rem;
             font-family: var(--font-cn);
             font-weight: 600;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.07em;
             border: 2px solid var(--gold-dark);
             background: transparent;
             color: var(--gold-light);
             border-radius: 50px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.35s ease;
             position: relative;
             overflow: hidden;
             z-index: 1;
             backdrop-filter: blur(4px);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(201, 169, 110, 0.15), rgba(201, 169, 110, 0.05));
+            background: linear-gradient(135deg, rgba(200, 164, 92, 0.18), rgba(200, 164, 92, 0.04));
             z-index: -1;
             transition: var(--transition);
         }
         .btn:hover {
             border-color: var(--gold-light);
             color: #fff;
-            box-shadow: 0 0 30px rgba(201, 169, 110, 0.3), 0 0 60px rgba(201, 169, 110, 0.1);
+            box-shadow: 0 0 36px rgba(200, 164, 92, 0.3), 0 0 70px rgba(200, 164, 92, 0.08);
             transform: translateY(-2px);
         }
-        .btn:hover::before {
-            background: linear-gradient(135deg, rgba(201, 169, 110, 0.3), rgba(201, 169, 110, 0.12));
-        }
         .btn:active {
-            transform: scale(0.96);
+            transform: scale(0.94);
             transition: 0.1s;
         }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
         .btn-primary {
-            background: linear-gradient(135deg, rgba(180, 130, 60, 0.4), rgba(140, 100, 40, 0.3));
+            background: linear-gradient(135deg, rgba(180, 130, 50, 0.45), rgba(130, 90, 30, 0.35));
             border-color: var(--gold);
             color: #fff;
-            font-size: 1.1rem;
-            padding: 16px 44px;
-            letter-spacing: 0.1em;
+            font-size: 1.08rem;
+            padding: 15px 40px;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 50px rgba(200, 164, 92, 0.45), 0 0 90px rgba(200, 164, 92, 0.12);
         }
         .btn-sm {
-            padding: 8px 20px;
-            font-size: 0.85rem;
-            letter-spacing: 0.04em;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            border-width: 1.5px;
         }
-
         .btn-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        /* 卦象显示 */
+        /* ========== 卦象展示区 ========== */
         .gua-display {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 0;
+            gap: 3px;
+            padding: 6px 0;
         }
         .yao-row {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 8px 16px;
+            gap: 10px;
+            padding: 10px 14px;
             border-radius: var(--radius-sm);
-            transition: var(--transition);
-            width: 100%;
-            max-width: 420px;
+            transition: all 0.4s ease;
             cursor: default;
             position: relative;
-            min-height: 48px;
+            min-height: 44px;
+            border: 1px solid transparent;
         }
         .yao-row:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.015);
+            border-color: rgba(200, 164, 92, 0.1);
+        }
+        .yao-row.just-revealed {
+            animation: revealYao 0.5s ease-out;
+        }
+        @keyframes revealYao {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         .yao-label {
             font-family: var(--font-cn);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-dim);
-            width: 32px;
+            width: 28px;
             text-align: center;
             flex-shrink: 0;
             letter-spacing: 0.05em;
+            font-weight: 600;
         }
-        .yao-line-container {
+        .yao-line-area {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            height: 36px;
+            height: 40px;
+            min-width: 80px;
         }
-        .yao-line {
-            height: 4px;
-            border-radius: 2px;
+        .yao-line-yang {
+            width: 100%;
+            max-width: 170px;
+            height: 5px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold-light) 15%, var(--gold) 50%, var(--gold-light) 85%, transparent);
+            box-shadow: 0 0 14px rgba(200, 164, 92, 0.4);
             transition: all 0.5s ease;
             position: relative;
         }
-        .yao-line.yang {
-            width: 100%;
-            max-width: 180px;
-            background: linear-gradient(90deg, transparent, var(--gold-light), var(--gold), var(--gold-light), transparent);
-            box-shadow: 0 0 12px rgba(201, 169, 110, 0.3);
-        }
-        .yao-line.yin {
+        .yao-line-yin-group {
             display: flex;
-            gap: 18px;
+            gap: 20px;
             justify-content: center;
             width: 100%;
-            max-width: 180px;
+            max-width: 170px;
         }
-        .yao-line.yin::before,
-        .yao-line.yin::after {
-            content: '';
-            width: 62px;
-            height: 4px;
-            border-radius: 2px;
-            background: linear-gradient(90deg, transparent, rgba(180, 160, 130, 0.7), transparent);
-            box-shadow: 0 0 8px rgba(180, 160, 130, 0.2);
+        .yao-line-yin-half {
+            width: 55px;
+            height: 5px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, transparent, rgba(190, 170, 140, 0.7) 20%, rgba(180, 155, 120, 0.75) 80%, transparent);
+            box-shadow: 0 0 8px rgba(180, 155, 120, 0.2);
+            transition: all 0.5s ease;
         }
-        .yao-line.moving {
-            animation: pulse-yao 1.8s ease-in-out infinite;
+        .yao-line-moving {
+            animation: movingGlow 1.6s ease-in-out infinite;
         }
-        @keyframes pulse-yao {
+        @keyframes movingGlow {
             0%,
             100% {
-                opacity: 1;
+                filter: brightness(1);
+                box-shadow: 0 0 14px rgba(200, 164, 92, 0.4);
             }
             50% {
-                opacity: 0.55;
+                filter: brightness(1.5);
+                box-shadow: 0 0 28px rgba(255, 180, 80, 0.7), 0 0 50px rgba(212, 100, 74, 0.4);
             }
         }
         .yao-marker {
             position: absolute;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
-            color: #e74c3c;
+            color: #e85d3a;
             font-family: var(--font-cn);
-            animation: pulse-yao 1.8s ease-in-out infinite;
-            text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+            animation: markerPulse 1.6s ease-in-out infinite;
+            text-shadow: 0 0 12px rgba(232, 93, 58, 0.7);
             pointer-events: none;
+            z-index: 3;
         }
-        .yao-marker.circle {
-            font-size: 1.1rem;
+        @keyframes markerPulse {
+            0%,
+            100% {
+                text-shadow: 0 0 12px rgba(232, 93, 58, 0.7);
+            }
+            50% {
+                text-shadow: 0 0 24px rgba(255, 120, 70, 1), 0 0 40px rgba(232, 93, 58, 0.8);
+            }
         }
-        .yao-info {
+        .yao-info-tags {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            min-width: 100px;
-            justify-content: flex-end;
             flex-shrink: 0;
             font-family: var(--font-cn);
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            min-width: 95px;
         }
-        .yao-info .najia {
+        .yao-info-tags .najia {
             color: var(--text-dim);
-            font-size: 0.75rem;
-        }
-        .yao-info .liuqin {
-            font-weight: 600;
-            color: #c9a96e;
-            letter-spacing: 0.04em;
-        }
-        .badge-shi,
-        .badge-ying {
             font-size: 0.7rem;
-            padding: 2px 7px;
-            border-radius: 10px;
+            letter-spacing: 0.03em;
+        }
+        .yao-info-tags .liuqin {
+            font-weight: 600;
+            color: #c8a45c;
+            letter-spacing: 0.05em;
+        }
+        .yao-info-tags .liushou-tag {
+            font-size: 0.65rem;
+            color: #7a7560;
+        }
+        .badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 12px;
             font-weight: 700;
             letter-spacing: 0.06em;
             flex-shrink: 0;
+            line-height: 1.2;
         }
         .badge-shi {
-            background: rgba(201, 169, 110, 0.2);
+            background: rgba(200, 164, 92, 0.22);
             color: #e8c97a;
-            border: 1px solid rgba(201, 169, 110, 0.4);
+            border: 1px solid rgba(200, 164, 92, 0.5);
         }
         .badge-ying {
-            background: rgba(160, 160, 180, 0.2);
-            color: #b0b0c0;
+            background: rgba(160, 160, 180, 0.18);
+            color: #b0b0c8;
             border: 1px solid rgba(160, 160, 180, 0.4);
         }
 
-        /* 卦名标题 */
-        .gua-title-section {
+        /* ========== 卦名标题 ========== */
+        .gua-header {
             text-align: center;
-            padding: 6px 0;
+            padding: 4px 0 8px;
         }
-        .gua-name-main {
+        .gua-main-title {
             font-family: var(--font-cn);
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #fff;
             letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .gua-name-main .divider {
-            color: var(--gold-dark);
-            margin: 0 8px;
-            font-weight: 300;
+        .gua-main-title .gua-symbol {
+            font-size: 2rem;
+            color: var(--gold-light);
+            text-shadow: 0 0 20px rgba(200, 164, 92, 0.5);
         }
-        .gua-subtitle {
-            font-size: 0.8rem;
+        .gua-meta {
+            font-size: 0.75rem;
             color: var(--text-dim);
-            letter-spacing: 0.08em;
-            margin-top: 2px;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+            font-family: var(--font-cn);
+        }
+        .gua-meta span {
+            color: var(--gold-pale);
+            font-weight: 500;
         }
 
-        /* 双卦并排 */
-        .dual-gua {
+        /* ========== 双卦布局 ========== */
+        .dual-gua-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 14px;
         }
         @media (max-width: 500px) {
-            .dual-gua {
+            .dual-gua-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 10px;
             }
-            .yao-info {
-                min-width: 70px;
-                font-size: 0.7rem;
-                gap: 4px;
+            .yao-info-tags {
+                min-width: 60px;
+                gap: 3px;
+                font-size: 0.68rem;
             }
             .yao-row {
-                gap: 6px;
-                padding: 6px 8px;
+                gap: 4px;
+                padding: 8px 6px;
             }
-            .yao-line.yin::before,
-            .yao-line.yin::after {
-                width: 40px;
+            .yao-line-yin-half {
+                width: 36px;
             }
-            .yao-line.yang {
-                max-width: 120px;
-            }
-            .yao-line.yin {
+            .yao-line-yin-group {
                 gap: 10px;
-                max-width: 120px;
+                max-width: 100px;
+            }
+            .yao-line-yang {
+                max-width: 100px;
+            }
+            .coin {
+                width: 54px;
+                height: 54px;
+                font-size: 1rem;
+            }
+            .coins-platform {
+                height: 100px;
+            }
+            .coins-tray {
+                gap: 12px;
+            }
+            .btn-primary {
+                padding: 13px 28px;
+                font-size: 0.95rem;
             }
         }
-        .gua-mini-title {
+        .gua-mini-header {
             text-align: center;
             font-family: var(--font-cn);
             font-size: 0.9rem;
             color: var(--gold-light);
             letter-spacing: 0.06em;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             font-weight: 600;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(200, 164, 92, 0.12);
         }
-        .gua-mini-title .tag {
-            font-size: 0.7rem;
-            padding: 2px 8px;
+        .gua-mini-header .mini-tag {
+            font-size: 0.68rem;
+            padding: 2px 7px;
             border-radius: 8px;
-            background: rgba(201, 169, 110, 0.15);
-            margin-left: 6px;
+            background: rgba(200, 164, 92, 0.12);
+            margin-left: 4px;
             font-weight: 400;
+            color: var(--gold-pale);
         }
 
-        /* 信息条 */
-        .info-bar {
+        /* ========== 信息栏 ========== */
+        .info-strip {
             display: flex;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 8px;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             color: var(--text-secondary);
             font-family: var(--font-cn);
             letter-spacing: 0.04em;
+            margin-top: 10px;
         }
-        .info-bar span {
+        .info-strip span {
             background: var(--bg-card2);
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 5px 12px;
+            border-radius: 16px;
             border: 1px solid var(--border);
+            white-space: nowrap;
         }
-        .info-bar .highlight {
+        .info-strip .em {
             color: var(--gold-light);
             font-weight: 600;
         }
+        .info-strip .em-red {
+            color: #e85d3a;
+            font-weight: 600;
+        }
 
-        /* Toast */
+        /* ========== Toast ========== */
         .toast {
             position: fixed;
-            top: 20px;
+            top: 24px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(-30px);
             z-index: 999;
             background: var(--bg-card);
-            border: 1px solid var(--gold-dark);
+            border: 1px solid var(--border-gold);
             color: var(--gold-light);
-            padding: 12px 28px;
+            padding: 11px 26px;
             border-radius: 30px;
             font-family: var(--font-cn);
             letter-spacing: 0.06em;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
         }
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-        .toast.hide {
-            opacity: 0;
-            transform: translateX(-50%) translateY(-20px);
-        }
 
-        /* 加载闪烁 */
-        .shimmer {
-            background: linear-gradient(90deg, var(--bg-card2) 25%, rgba(201, 169, 110, 0.08) 50%, var(--bg-card2) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
+        /* ========== 结果卡片动画 ========== */
+        .card.result-reveal {
+            animation: cardReveal 0.6s ease-out;
         }
-        @keyframes shimmer {
+        @keyframes cardReveal {
             0% {
-                background-position: 200% 0;
+                opacity: 0;
+                transform: translateY(20px);
             }
             100% {
-                background-position: -200% 0;
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -569,68 +793,81 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(201, 169, 110, 0.3);
+            background: rgba(200, 164, 92, 0.25);
             border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
+    <!-- 浮动粒子 -->
+    <div class="particles-container" id="particlesContainer"></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <div class="container">
         <!-- 头部 -->
         <div class="header">
-            <div class="icon-taiji"></div>
+            <div class="taiji-wrapper">
+                <div class="taiji"></div>
+                <div class="taiji-ring"></div>
+            </div>
             <h1>六爻排盘</h1>
             <p class="subtitle">周 易 占 卜 · 铜 钱 起 卦</p>
         </div>
 
         <!-- 摇卦卡片 -->
         <div class="card" id="shakeCard">
-            <div class="shake-area">
-                <div class="coins-display" id="coinsDisplay">
-                    <div class="coin" id="coin1">🪙</div>
-                    <div class="coin" id="coin2">🪙</div>
-                    <div class="coin" id="coin3">🪙</div>
+            <div class="shake-stage">
+                <div class="coins-platform" id="coinsPlatform">
+                    <div class="coins-tray" id="coinsTray">
+                        <div class="coin" id="coin1">🪙</div>
+                        <div class="coin" id="coin2">🪙</div>
+                        <div class="coin" id="coin3">🪙</div>
+                    </div>
                 </div>
-                <p style="color:var(--text-dim);font-size:0.8rem;text-align:center;" id="shakeHint">
-                    点击下方按钮，摇动铜钱起卦
-                </p>
+                <div class="shake-info" id="shakeHint">凝神静心，点击下方按钮摇动铜钱</div>
+                <div class="shake-progress" id="shakeProgress">
+                    <span style="font-size:0.7rem;color:var(--text-dim);">已摇</span>
+                    <span class="shake-dot" data-index="0"></span>
+                    <span class="shake-dot" data-index="1"></span>
+                    <span class="shake-dot" data-index="2"></span>
+                    <span class="shake-dot" data-index="3"></span>
+                    <span class="shake-dot" data-index="4"></span>
+                    <span class="shake-dot" data-index="5"></span>
+                    <span style="font-size:0.7rem;color:var(--text-dim);">爻</span>
+                </div>
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="btnShake" title="随机摇卦">
+                    <button class="btn btn-primary" id="btnShake" title="摇卦 (空格键)">
                         ✦ 摇 卦 ✦
                     </button>
                 </div>
-                <div class="btn-group" style="margin-top:4px;">
-                    <button class="btn btn-sm" id="btnTimeGua">📅 时间起卦</button>
-                    <button class="btn btn-sm" id="btnClear">↺ 清空</button>
-                </div>
-                <div style="font-size:0.7rem;color:var(--text-dim);text-align:center;margin-top:4px;">
-                    已摇 <span id="shakeCount" style="color:var(--gold-light);">0</span>/6 爻
+                <div class="btn-group">
+                    <button class="btn btn-sm" id="btnTimeGua">📅 时间补爻</button>
+                    <button class="btn btn-sm" id="btnClear">↺ 清空重来</button>
                 </div>
             </div>
         </div>
 
         <!-- 排盘结果 -->
         <div class="card" id="resultCard" style="display:none;">
-            <div class="gua-title-section" id="guaTitleSection"></div>
-            <div class="dual-gua" id="dualGuaContainer"></div>
-            <div class="info-bar" id="infoBar" style="margin-top:16px;"></div>
+            <div class="gua-header" id="guaHeader"></div>
+            <div class="dual-gua-grid" id="dualGuaGrid"></div>
+            <div class="info-strip" id="infoStrip"></div>
         </div>
 
         <!-- 说明 -->
-        <div class="card" style="padding:16px 20px;">
-            <p style="font-size:0.75rem;color:var(--text-dim);text-align:center;letter-spacing:0.04em;font-family:var(--font-cn);">
-                📖 三枚铜钱，摇六次成卦 · 老阳(⚊○)老阴(⚋×)为动爻 · 本卦变卦相参
+        <div class="card" style="padding:14px 18px;">
+            <p style="font-size:0.7rem;color:var(--text-dim);text-align:center;letter-spacing:0.04em;font-family:var(--font-cn);margin:0;">
+                📖 三枚铜钱摇六次 · 老阳⚊○老阴⚋×为动爻 · 本卦变卦相参 · 按<strong style="color:var(--gold-light);">空格键</strong>快速摇卦
             </p>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast hide" id="toast"></div>
-
     <script>
         (function() {
-            // ==================== 八卦基础数据 ====================
+            // ==================== 八卦数据 ====================
             const BAGUA = {
                 1: { name: '乾', wuxing: '金', symbol: '☰', nature: '天' },
                 2: { name: '兑', wuxing: '金', symbol: '☱', nature: '泽' },
@@ -642,8 +879,7 @@
                 8: { name: '坤', wuxing: '土', symbol: '☷', nature: '地' }
             };
 
-            // 八宫64卦数据: 宫 -> [卦名, 上卦, 下卦, 世爻位置]
-            // 世爻: 1-6 (初到上), 应爻自动计算 (世+3, 循环)
+            // 八宫64卦: [卦名, 上卦, 下卦, 世爻位置(1-6)]
             const GONG_DATA = {
                 '乾': [
                     ['乾为天', 1, 1, 6],
@@ -727,29 +963,28 @@
                 ]
             };
 
-            // 构建64卦快速查找表
-            const GUA64_MAP = {}; // key: "上卦-下卦" -> {name, gong, shiYao, gongWuxing}
+            // 64卦查找表
+            const GUA64_MAP = {};
             for (const [gongName, guaList] of Object.entries(GONG_DATA)) {
                 const gongWuxing = BAGUA[Object.keys(BAGUA).find(k => BAGUA[k].name === gongName)]?.wuxing || '土';
                 guaList.forEach(([name, shang, xia, shiYao]) => {
-                    const key = `${shang}-${xia}`;
-                    GUA64_MAP[key] = { name, gong: gongName, shiYao, gongWuxing, shangGua: shang, xiaGua: xia };
+                    GUA64_MAP[`${shang}-${xia}`] = { name, gong: gongName, shiYao, gongWuxing, shangGua: shang,
+                        xiaGua: xia };
                 });
             }
 
-            // 纳甲基础数据 (八纯卦的纳甲，从初爻到上爻)
+            // 纳甲基础 (八纯卦从初爻到上爻)
             const NAJIA_BASE = {
-                1: ['子', '寅', '辰', '午', '申', '戌'], // 乾
-                2: ['巳', '卯', '丑', '亥', '酉', '未'], // 兑
-                3: ['卯', '丑', '亥', '酉', '未', '巳'], // 离
-                4: ['子', '寅', '辰', '午', '申', '戌'], // 震 (同乾)
-                5: ['丑', '亥', '酉', '未', '巳', '卯'], // 巽
-                6: ['寅', '辰', '午', '申', '戌', '子'], // 坎
-                7: ['辰', '午', '申', '戌', '子', '寅'], // 艮
-                8: ['未', '巳', '卯', '丑', '亥', '酉'], // 坤
+                1: ['子', '寅', '辰', '午', '申', '戌'],
+                2: ['巳', '卯', '丑', '亥', '酉', '未'],
+                3: ['卯', '丑', '亥', '酉', '未', '巳'],
+                4: ['子', '寅', '辰', '午', '申', '戌'],
+                5: ['丑', '亥', '酉', '未', '巳', '卯'],
+                6: ['寅', '辰', '午', '申', '戌', '子'],
+                7: ['辰', '午', '申', '戌', '子', '寅'],
+                8: ['未', '巳', '卯', '丑', '亥', '酉'],
             };
 
-            // 地支五行
             const DIZHI_WUXING = {
                 '子': '水',
                 '丑': '土',
@@ -765,48 +1000,55 @@
                 '亥': '水'
             };
 
-            // 六亲关系: 以"我"(宫位五行)为基准
             function getLiuQin(woWuxing, yaoWuxing) {
-                const relation = {
+                const map = {
                     '金': { '金': '兄弟', '水': '子孙', '木': '妻财', '火': '官鬼', '土': '父母' },
                     '水': { '水': '兄弟', '木': '子孙', '火': '妻财', '土': '官鬼', '金': '父母' },
                     '木': { '木': '兄弟', '火': '子孙', '土': '妻财', '金': '官鬼', '水': '父母' },
                     '火': { '火': '兄弟', '土': '子孙', '金': '妻财', '水': '官鬼', '木': '父母' },
                     '土': { '土': '兄弟', '金': '子孙', '水': '妻财', '木': '官鬼', '火': '父母' },
                 };
-                return relation[woWuxing]?.[yaoWuxing] || '未知';
+                return map[woWuxing]?.[yaoWuxing] || '—';
             }
 
-            // 六兽 (根据日干确定初爻六兽)
             const LIUSHOU_ORDER = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武'];
-            const RI_GAN_LIUSHOU = {
-                '甲': 0,
-                '乙': 0,
-                '丙': 1,
-                '丁': 1,
-                '戊': 2,
-                '己': 3,
-                '庚': 4,
-                '辛': 4,
-                '壬': 5,
-                '癸': 5
-            };
+            const RI_GAN_LIUSHOU = { '甲': 0, '乙': 0, '丙': 1, '丁': 1, '戊': 2, '己': 3, '庚': 4, '辛': 4, '壬': 5, '癸': 5 };
 
             function getLiuShou(riGan) {
-                const startIndex = RI_GAN_LIUSHOU[riGan] || 0;
+                const start = RI_GAN_LIUSHOU[riGan] || 0;
                 const result = [];
-                for (let i = 0; i < 6; i++) {
-                    result.push(LIUSHOU_ORDER[(startIndex + i) % 6]);
-                }
-                return result; // 初爻到上爻
+                for (let i = 0; i < 6; i++) result.push(LIUSHOU_ORDER[(start + i) % 6]);
+                return result;
             }
 
-            // ==================== 状态管理 ====================
-            let shakeResults = []; // 存储6次摇卦结果 [{value: 6|7|8|9, isMoving: bool}]
-            let currentShakeIndex = 0;
+            function getRiGan() {
+                const now = new Date();
+                const base = new Date(2024, 0, 1);
+                const diff = Math.floor((now - base) / (1000 * 60 * 60 * 24));
+                const ganArr = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+                return ganArr[((diff % 10) + 10) % 10];
+            }
 
-            // ==================== DOM元素 ====================
-            const $coinsDisplay = document.getElementById('coinsDisplay');
+            function getNajiaForGua(shangNum, xiaNum) {
+                const xiaFull = NAJIA_BASE[xiaNum] || NAJIA_BASE[8];
+                const shangFull = NAJIA_BASE[shangNum] || NAJIA_BASE[8];
+                if (shangNum === xiaNum) return [...xiaFull];
+                return [...xiaFull.slice(0, 3), ...shangFull.slice(3, 6)];
+            }
+
+            function getGuaNumFromYao(threeYao) {
+                const binary = threeYao.map(y => y.isYang ? '1' : '0').join('');
+                const map = { '111': 1, '110': 2, '101': 3, '100': 4, '011': 5, '010': 6, '001': 7, '000': 8 };
+                return map[binary] || 8;
+            }
+
+            // ==================== 状态 ====================
+            let shakeResults = [];
+            let currentShakeIndex = 0;
+            let isAnimating = false;
+
+            // ==================== DOM ====================
+            const $coinsPlatform = document.getElementById('coinsPlatform');
             const $coin1 = document.getElementById('coin1');
             const $coin2 = document.getElementById('coin2');
             const $coin3 = document.getElementById('coin3');
@@ -814,12 +1056,54 @@
             const $btnTimeGua = document.getElementById('btnTimeGua');
             const $btnClear = document.getElementById('btnClear');
             const $shakeHint = document.getElementById('shakeHint');
-            const $shakeCount = document.getElementById('shakeCount');
+            const $shakeProgress = document.getElementById('shakeProgress');
             const $resultCard = document.getElementById('resultCard');
-            const $guaTitleSection = document.getElementById('guaTitleSection');
-            const $dualGuaContainer = document.getElementById('dualGuaContainer');
-            const $infoBar = document.getElementById('infoBar');
+            const $guaHeader = document.getElementById('guaHeader');
+            const $dualGuaGrid = document.getElementById('dualGuaGrid');
+            const $infoStrip = document.getElementById('infoStrip');
             const $toast = document.getElementById('toast');
+            const $particlesContainer = document.getElementById('particlesContainer');
+            const $shakeDots = $shakeProgress.querySelectorAll('.shake-dot');
+
+            // ==================== 粒子系统 ====================
+            function spawnParticles(x, y, count = 18) {
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 40 + Math.random() * 80;
+                    const dx = Math.cos(angle) * dist;
+                    const dy = Math.sin(angle) * dist - 30;
+                    p.style.cssText = `
+                        left: ${x}px;
+                        top: ${y}px;
+                        width: ${2 + Math.random()*3}px;
+                        height: ${2 + Math.random()*3}px;
+                        animation: particleBurst 0.9s ease-out forwards;
+                        animation-delay: ${Math.random()*0.15}s;
+                        --dx: ${dx}px;
+                        --dy: ${dy}px;
+                        background: ${Math.random()<0.5 ? 'var(--gold-light)' : '#e8c97a'};
+                    `;
+                    $particlesContainer.appendChild(p);
+                    p.addEventListener('animationend', () => p.remove());
+                }
+            }
+
+            // 注入粒子动画keyframes
+            const particleStyle = document.createElement('style');
+            particleStyle.textContent = `
+                @keyframes particleBurst {
+                    0% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+                    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(particleStyle);
+
+            function getCoinCenter(coinEl) {
+                const rect = coinEl.getBoundingClientRect();
+                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            }
 
             // ==================== Toast ====================
             let toastTimer;
@@ -827,234 +1111,243 @@
             function showToast(msg) {
                 clearTimeout(toastTimer);
                 $toast.textContent = msg;
-                $toast.classList.remove('hide');
                 $toast.classList.add('show');
-                toastTimer = setTimeout(() => {
-                    $toast.classList.remove('show');
-                    $toast.classList.add('hide');
-                }, 1800);
+                toastTimer = setTimeout(() => $toast.classList.remove('show'), 1800);
             }
 
             // ==================== 铜钱动画 ====================
-            function animateCoins(callback) {
-                const coins = [$coin1, $coin2, $coin3];
-                coins.forEach(c => c.classList.add('rolling'));
-                $btnShake.disabled = true;
-                $btnTimeGua.disabled = true;
-                $shakeHint.textContent = '铜钱转动中...';
-
-                setTimeout(() => {
-                    coins.forEach(c => c.classList.remove('rolling'));
-                    callback();
-                    $btnShake.disabled = false;
-                    $btnTimeGua.disabled = false;
-                }, 650);
+            function shakeOnce() {
+                const coins = [];
+                for (let i = 0; i < 3; i++) coins.push(Math.random() < 0.5 ? 2 : 3);
+                const total = coins[0] + coins[1] + coins[2];
+                return { value: total, isMoving: total === 6 || total === 9, coins };
             }
 
-            function displayCoinResults(results) {
-                const coinEls = [$coin1, $coin2, $coin3];
-                const valueToDisplay = { 6: '阴 ×', 7: '阳', 8: '阴', 9: '阳 ○' };
-                const valueToClass = { 6: 'tails', 7: 'heads', 8: 'tails', 9: 'heads' };
+            function animateCoins(callback) {
+                if (isAnimating) return;
+                isAnimating = true;
+                $btnShake.disabled = true;
+                $btnTimeGua.disabled = true;
+                const coins = [$coin1, $coin2, $coin3];
 
-                results.forEach((val, i) => {
-                    coinEls[i].textContent = valueToDisplay[val] || '?';
-                    coinEls[i].className = 'coin ' + (valueToClass[val] || '');
+                // 阶段1: 抛掷动画
+                coins.forEach((c, i) => {
+                    c.classList.remove('land-bounce');
+                    c.style.animationDelay = `${i*0.08}s`;
+                    c.classList.add('tossing');
+                });
+
+                // 清除抛掷动画
+                setTimeout(() => {
+                    coins.forEach(c => c.classList.remove('tossing'));
+                }, 750);
+
+                // 阶段2: 结果展示
+                setTimeout(() => {
+                    callback();
+                    // 落地弹跳
+                    coins.forEach((c, i) => {
+                        c.style.animationDelay = `${i*0.06}s`;
+                        c.classList.add('land-bounce');
+                        setTimeout(() => c.classList.remove('land-bounce'), 400);
+                    });
+                    // 粒子效果
+                    coins.forEach(c => {
+                        const pos = getCoinCenter(c);
+                        spawnParticles(pos.x, pos.y, 10);
+                    });
+                    // 平台光晕
+                    const glow = document.createElement('div');
+                    glow.className = 'coin-glow';
+                    const platRect = $coinsPlatform.getBoundingClientRect();
+                    glow.style.left = (platRect.width / 2 - 40) + 'px';
+                    glow.style.top = (platRect.height / 2 - 40) + 'px';
+                    $coinsPlatform.appendChild(glow);
+                    setTimeout(() => glow.remove(), 700);
+
+                    isAnimating = false;
+                    $btnShake.disabled = currentShakeIndex >= 6;
+                    $btnTimeGua.disabled = currentShakeIndex >= 6;
+                }, 600);
+            }
+
+            function displayCoinResults(result) {
+                const valToDisplay = { 6: '阴 ✕', 7: '阳', 8: '阴', 9: '阳 ○' };
+                const valToClass = { 6: 'tails', 7: 'heads', 8: 'tails', 9: 'heads' };
+                const coins = [$coin1, $coin2, $coin3];
+                coins.forEach(c => {
+                    c.textContent = valToDisplay[result.value] || '?';
+                    c.className = 'coin ' + (valToClass[result.value] || '');
                 });
             }
 
-            // ==================== 摇卦逻辑 ====================
-            function shakeOnce() {
-                // 模拟三枚铜钱
-                const coins = [];
-                for (let i = 0; i < 3; i++) {
-                    coins.push(Math.random() < 0.5 ? 2 : 3); // 2=反面(阴), 3=正面(阳)
-                }
-                const total = coins[0] + coins[1] + coins[2];
-                // 6=老阴(动), 7=少阳, 8=少阴, 9=老阳(动)
-                return {
-                    value: total,
-                    isMoving: total === 6 || total === 9,
-                    coins: coins
-                };
+            function updateProgressDots() {
+                $shakeDots.forEach((dot, i) => {
+                    dot.classList.remove('filled', 'moving-dot');
+                    if (i < currentShakeIndex) {
+                        const isMoving = shakeResults[i]?.isMoving;
+                        dot.classList.add(isMoving ? 'moving-dot' : 'filled');
+                    }
+                });
             }
 
             function performShake() {
-                if (currentShakeIndex >= 6) {
-                    showToast('已摇满六爻，请先清空再摇');
+                if (currentShakeIndex >= 6 || isAnimating) {
+                    if (currentShakeIndex >= 6) showToast('已摇满六爻，请先清空再摇');
                     return;
                 }
+                $shakeHint.textContent = '铜钱转动中……';
                 animateCoins(() => {
                     const result = shakeOnce();
-                    displayCoinResults([result.value, result.value, result.value]);
-                    // 实际显示用三枚的具体结果
-                    const coinVals = result.coins;
-                    const displayVals = coinVals.map(c => c === 3 ? 7 : 8); // 简化显示
-                    // 重新显示为实际三枚
-                    const actualDisplay = coinVals.map(c => c === 3 ? 9 : 6); // 用9和6代表
-                    // 还是用value统一显示
-                    displayCoinResults([result.value, result.value, result.value]);
-
+                    displayCoinResults(result);
                     shakeResults.push(result);
                     currentShakeIndex++;
-                    $shakeCount.textContent = currentShakeIndex;
-
-                    const totalVal = result.value;
-                    const descMap = { 6: '老阴(动爻×)', 7: '少阳', 8: '少阴', 9: '老阳(动爻○)' };
-                    $shakeHint.textContent =
-                        `第${currentShakeIndex}爻：${descMap[totalVal]} | 合计${totalVal} (三枚铜钱)`;
-
+                    updateProgressDots();
+                    const descMap = { 6: '老阴(动×)', 7: '少阳', 8: '少阴', 9: '老阳(动○)' };
+                    $shakeHint.innerHTML =
+                        `第<span class="highlight-num">${currentShakeIndex}</span>爻：${descMap[result.value]} | 合计 <span class="highlight-num">${result.value}</span>`;
                     if (currentShakeIndex >= 6) {
-                        $shakeHint.textContent = '六爻已齐备，请看排盘结果 ↓';
+                        $shakeHint.innerHTML = '六爻已备，卦象显现 ↓';
                         $btnShake.disabled = true;
-                        setTimeout(() => renderPaiPan(), 400);
+                        $btnTimeGua.disabled = true;
+                        setTimeout(() => renderPaiPan(), 500);
                     }
                 });
             }
 
             function timeQiGua() {
-                if (currentShakeIndex >= 6) {
-                    showToast('已摇满六爻，请先清空');
+                if (currentShakeIndex >= 6 || isAnimating) {
+                    if (currentShakeIndex >= 6) showToast('已摇满六爻，请先清空');
                     return;
                 }
-                // 使用当前时间生成剩余爻
                 const remaining = 6 - currentShakeIndex;
+                $shakeHint.textContent = '以时起卦中……';
                 animateCoins(() => {
                     for (let i = 0; i < remaining; i++) {
-                        const now = Date.now() + i * 137;
-                        const seed = (now % 10000) / 10000;
+                        const seed = (Date.now() + i * 137 + Math.random() * 1000) % 10000 / 10000;
                         const coins = [];
-                        for (let j = 0; j < 3; j++) {
-                            coins.push(((Math.floor(seed * (j + 1) * 7.13) % 2) === 0) ? 2 : 3);
-                        }
+                        for (let j = 0; j < 3; j++) coins.push(((Math.floor(seed * (j + 1) * 7.13) % 2) === 0) ? 2 :
+                            3);
                         const total = coins[0] + coins[1] + coins[2];
-                        shakeResults.push({
-                            value: total,
-                            isMoving: total === 6 || total === 9,
-                            coins: coins
-                        });
+                        shakeResults.push({ value: total, isMoving: total === 6 || total === 9, coins });
                     }
                     currentShakeIndex = 6;
-                    $shakeCount.textContent = 6;
-                    displayCoinResults([shakeResults[5].value, shakeResults[5].value, shakeResults[5].value]);
-                    $shakeHint.textContent = '六爻已齐备（时间起卦），请看排盘结果 ↓';
+                    updateProgressDots();
+                    displayCoinResults(shakeResults[5]);
+                    $shakeHint.innerHTML = '六爻已备（时间补爻），卦象显现 ↓';
                     $btnShake.disabled = true;
-                    setTimeout(() => renderPaiPan(), 400);
+                    $btnTimeGua.disabled = true;
+                    setTimeout(() => renderPaiPan(), 500);
                 });
             }
 
             function clearAll() {
+                if (isAnimating) return;
                 shakeResults = [];
                 currentShakeIndex = 0;
-                $shakeCount.textContent = '0';
-                $shakeHint.textContent = '点击下方按钮，摇动铜钱起卦';
                 $btnShake.disabled = false;
                 $btnTimeGua.disabled = false;
+                $shakeHint.textContent = '凝神静心，点击下方按钮摇动铜钱';
                 $resultCard.style.display = 'none';
-                // 重置铜钱显示
+                $resultCard.classList.remove('result-reveal');
                 [$coin1, $coin2, $coin3].forEach(c => {
                     c.textContent = '🪙';
                     c.className = 'coin';
                 });
+                $shakeDots.forEach(d => d.classList.remove('filled', 'moving-dot'));
                 showToast('已清空，重新起卦');
             }
 
             // ==================== 排盘渲染 ====================
             function renderPaiPan() {
                 if (shakeResults.length !== 6) return;
-
-                // 从下往上：初爻=index0, 上爻=index5
                 const benGuaYao = shakeResults.map(r => ({
                     value: r.value,
                     isYang: r.value === 7 || r.value === 9,
                     isMoving: r.isMoving
                 }));
-
-                // 确定本卦的上卦和下卦
-                const xiaGuaNum = getGuaNumFromYao(benGuaYao.slice(0, 3)); // 下卦(初二三)
-                const shangGuaNum = getGuaNumFromYao(benGuaYao.slice(3, 6)); // 上卦(四五上)
-
-                // 变卦
+                const xiaNum = getGuaNumFromYao(benGuaYao.slice(0, 3));
+                const shangNum = getGuaNumFromYao(benGuaYao.slice(3, 6));
                 const bianGuaYao = benGuaYao.map(y => ({
                     isYang: y.isMoving ? !y.isYang : y.isYang,
                     isMoving: false
                 }));
-                const bianXiaGuaNum = getGuaNumFromYao(bianGuaYao.slice(0, 3));
-                const bianShangGuaNum = getGuaNumFromYao(bianGuaYao.slice(3, 6));
+                const bianXiaNum = getGuaNumFromYao(bianGuaYao.slice(0, 3));
+                const bianShangNum = getGuaNumFromYao(bianGuaYao.slice(3, 6));
+                const benInfo = GUA64_MAP[`${shangNum}-${xiaNum}`];
+                const bianInfo = GUA64_MAP[`${bianShangNum}-${bianXiaNum}`];
+                if (!benInfo) { showToast('卦象识别失败，请重试'); return; }
+                const gongWuxing = benInfo.gongWuxing;
+                const shiYao = benInfo.shiYao;
+                const yingYao = ((shiYao + 2) % 6) + 1;
+                const benNajia = getNajiaForGua(shangNum, xiaNum);
+                const bianNajia = getNajiaForGua(bianShangNum, bianXiaNum);
+                const riGan = getRiGan();
+                const liuShou = getLiuShou(riGan);
+                const hasMoving = benGuaYao.some(y => y.isMoving);
+                const bgShang = BAGUA[shangNum];
+                const bgXia = BAGUA[xiaNum];
 
-                // 查找本卦信息
-                const benKey = `${shangGuaNum}-${xiaGuaNum}`;
-                const benGuaInfo = GUA64_MAP[benKey];
-                const bianKey = `${bianShangGuaNum}-${bianXiaGuaNum}`;
-                const bianGuaInfo = GUA64_MAP[bianKey];
-
-                if (!benGuaInfo) {
-                    showToast('卦象查找失败，请重试');
-                    return;
-                }
-
-                const gongWuxing = benGuaInfo.gongWuxing;
-                const shiYao = benGuaInfo.shiYao;
-                const yingYao = ((shiYao + 2) % 6) + 1; // 世+3，循环1-6
-
-                // 获取纳甲
-                const benNajia = getNajiaForGua(shangGuaNum, xiaGuaNum);
-                const bianNajia = getNajiaForGua(bianShangGuaNum, bianXiaGuaNum);
-
-                // 日干（用当前日期）
-                const todayGan = getRiGan();
-                const liuShou = getLiuShou(todayGan);
-
-                // 是否有动爻
-                const hasMovingYao = benGuaYao.some(y => y.isMoving);
-
-                // 渲染标题
-                const bgShang = BAGUA[shangGuaNum];
-                const bgXia = BAGUA[xiaGuaNum];
-                $guaTitleSection.innerHTML = `
-                    <div class="gua-name-main">
-                        ${bgShang?.symbol || '?'} <span>${benGuaInfo.name}</span> <span class="divider">|</span>
-                        ${bgXia?.symbol || '?'}
+                // 标题
+                $guaHeader.innerHTML = `
+                    <div class="gua-main-title">
+                        <span class="gua-symbol">${bgShang?.symbol||'?'}</span>
+                        <span>${benInfo.name}</span>
+                        <span class="gua-symbol">${bgXia?.symbol||'?'}</span>
                     </div>
-                    <div class="gua-subtitle">
-                        宫位：<span style="color:#c9a96e;">${benGuaInfo.gong}宫</span> ·
-                        五行：<span style="color:#c9a96e;">${gongWuxing}</span> ·
-                        世爻：<span style="color:#e8c97a;">第${shiYao}爻</span> ·
-                        日干：<span style="color:#c9a96e;">${todayGan}</span>
-                        ${hasMovingYao ? ' · <span style="color:#e74c3c;">有动爻</span>' : ' · <span style="color:#5d8a5e;">静卦</span>'}
+                    <div class="gua-meta">
+                        宫位：<span>${benInfo.gong}宫</span> ·
+                        五行：<span>${gongWuxing}</span> ·
+                        世爻：<span>第${shiYao}爻</span> ·
+                        日干：<span>${riGan}</span>
+                        ${hasMoving ? ' · <span style="color:#e85d3a;">有动爻</span>' : ' · <span style="color:#5d8a5e;">静卦</span>'}
                     </div>
                 `;
 
-                // 渲染双卦
-                $dualGuaContainer.innerHTML = `
+                // 双卦
+                $dualGuaGrid.innerHTML = `
                     <div>
-                        <div class="gua-mini-title">本卦 <span class="tag">${benGuaInfo.name}</span></div>
-                        ${renderYaoList(benGuaYao, benNajia, gongWuxing, shiYao, yingYao, liuShou, true)}
+                        <div class="gua-mini-header">本卦<span class="mini-tag">${benInfo.name}</span></div>
+                        ${buildYaoList(benGuaYao, benNajia, gongWuxing, shiYao, yingYao, liuShou, true)}
                     </div>
                     <div>
-                        <div class="gua-mini-title">变卦 <span class="tag">${bianGuaInfo?.name || '—'}</span></div>
-                        ${renderYaoList(bianGuaYao, bianNajia, gongWuxing, shiYao, yingYao, liuShou, false)}
+                        <div class="gua-mini-header">变卦<span class="mini-tag">${bianInfo?.name||'—'}</span></div>
+                        ${buildYaoList(bianGuaYao, bianNajia, gongWuxing, shiYao, yingYao, liuShou, false)}
                     </div>
                 `;
 
-                // 信息栏
-                const movingInfo = benGuaYao.map((y, i) => y.isMoving ? `第${i+1}爻动` : null).filter(Boolean).join(
-                    '、');
-                $infoBar.innerHTML = `
-                    <span>宫位五行：<span class="highlight">${gongWuxing}</span></span>
-                    <span>世爻：<span class="highlight">第${shiYao}爻</span></span>
-                    <span>应爻：<span class="highlight">第${yingYao}爻</span></span>
-                    ${movingInfo ? `<span>动爻：<span class="highlight" style="color:#e74c3c;">${movingInfo}</span></span>` : '<span>静卦</span>'}
-                    <span>日干六兽始：<span class="highlight">${liuShou[0]}</span></span>
+                // 信息条
+                const movingStr = benGuaYao.map((y, i) => y.isMoving ? `第${i+1}爻` : null).filter(Boolean).join('、');
+                $infoStrip.innerHTML = `
+                    <span>宫位：<span class="em">${benInfo.gong}宫·${gongWuxing}</span></span>
+                    <span>世爻：<span class="em">第${shiYao}爻</span></span>
+                    <span>应爻：<span class="em">第${yingYao}爻</span></span>
+                    ${movingStr ? `<span>动爻：<span class="em-red">${movingStr}</span></span>` : '<span>静卦</span>'}
+                    <span>六兽始：<span class="em">${liuShou[0]}</span></span>
                 `;
 
                 $resultCard.style.display = 'block';
+                $resultCard.classList.add('result-reveal');
+                // 重新触发动画
+                $resultCard.classList.remove('result-reveal');
+                void $resultCard.offsetWidth;
+                $resultCard.classList.add('result-reveal');
+
+                // 爻行逐条动画
+                const allYaoRows = $resultCard.querySelectorAll('.yao-row');
+                allYaoRows.forEach((row, i) => {
+                    row.classList.remove('just-revealed');
+                    row.style.animationDelay = `${i*0.06}s`;
+                    void row.offsetWidth;
+                    row.classList.add('just-revealed');
+                });
+
                 $resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
-            function renderYaoList(yaoArr, najiaArr, gongWuxing, shiYao, yingYao, liuShou, isBenGua) {
+            function buildYaoList(yaoArr, najiaArr, gongWuxing, shiYao, yingYao, liuShou, isBenGua) {
                 const yaoNames = ['初', '二', '三', '四', '五', '上'];
                 let html = '<div class="gua-display">';
-                // 从上往下显示（上爻在顶部）
                 for (let i = 5; i >= 0; i--) {
                     const yao = yaoArr[i];
                     const najia = najiaArr[i] || '?';
@@ -1064,100 +1357,48 @@
                     const isShi = yaoPos === shiYao;
                     const isYing = yaoPos === yingYao;
                     const isMoving = yao.isMoving && isBenGua;
-                    const liuShouName = liuShou[i];
-
-                    let lineHtml = '';
+                    let lineHtml;
                     if (yao.isYang) {
                         lineHtml =
-                            `<div class="yao-line yang${isMoving ? ' moving' : ''}" style="max-width:180px;"></div>`;
+                            `<div class="yao-line-yang${isMoving?' yao-line-moving':''}" style="max-width:170px;"></div>`;
                     } else {
-                        lineHtml =
-                            `<div class="yao-line yin${isMoving ? ' moving' : ''}" style="max-width:180px;"></div>`;
+                        lineHtml = `
+                            <div class="yao-line-yin-group${isMoving?' yao-line-moving':''}" style="max-width:170px;">
+                                <div class="yao-line-yin-half"></div>
+                                <div class="yao-line-yin-half"></div>
+                            </div>`;
                     }
-
                     let markerHtml = '';
                     if (isMoving) {
                         markerHtml = yao.isYang ?
-                            '<span class="yao-marker circle" style="right:-18px;">○</span>' :
-                            '<span class="yao-marker" style="right:-14px;">×</span>';
+                            '<span class="yao-marker" style="right:-10px;">○</span>' :
+                            '<span class="yao-marker" style="right:-6px;">×</span>';
                     }
-
                     html += `
-                        <div class="yao-row">
+                        <div class="yao-row" style="animation-delay:${(5-i)*0.05}s;">
                             <span class="yao-label">${yaoNames[i]}爻</span>
-                            <div class="yao-line-container">
-                                ${lineHtml}
-                                ${markerHtml}
-                            </div>
-                            <span class="yao-info">
+                            <div class="yao-line-area">${lineHtml}${markerHtml}</div>
+                            <span class="yao-info-tags">
                                 <span class="najia">${najia}</span>
                                 <span class="liuqin">${liuqin}</span>
-                                <span style="font-size:0.65rem;color:#7a7568;">${liuShouName}</span>
-                                ${isShi ? '<span class="badge-shi">世</span>' : ''}
-                                ${isYing ? '<span class="badge-ying">应</span>' : ''}
+                                <span class="liushou-tag">${liuShou[i]}</span>
+                                ${isShi?'<span class="badge badge-shi">世</span>':''}
+                                ${isYing?'<span class="badge badge-ying">应</span>':''}
                             </span>
-                        </div>
-                    `;
+                        </div>`;
                 }
                 html += '</div>';
                 return html;
-            }
-
-            // 根据三爻确定卦数
-            function getGuaNumFromYao(threeYao) {
-                // 三爻从下往上: index0=初, index1=中, index2=上
-                const binary = threeYao.map(y => y.isYang ? '1' : '0').join('');
-                const map = {
-                    '111': 1, // 乾 ☰
-                    '110': 2, // 兑 ☱
-                    '101': 3, // 离 ☲
-                    '100': 4, // 震 ☳
-                    '011': 5, // 巽 ☴
-                    '010': 6, // 坎 ☵
-                    '001': 7, // 艮 ☶
-                    '000': 8, // 坤 ☷
-                };
-                return map[binary] || 8;
-            }
-
-            // 获取卦的纳甲
-            function getNajiaForGua(shangGuaNum, xiaGuaNum) {
-                // 下卦使用基础纳甲
-                const xiaNajia = NAJIA_BASE[xiaGuaNum] || NAJIA_BASE[8];
-                // 上卦纳甲：对于纯卦直接用基础纳甲的后三爻；对于非纯卦需要调整
-                if (shangGuaNum === xiaGuaNum) {
-                    // 纯卦
-                    return [...xiaNajia]; // 初到上
-                }
-                // 非纯卦：上卦纳甲使用该卦基础纳甲的后三爻
-                const shangNajiaFull = NAJIA_BASE[shangGuaNum] || NAJIA_BASE[8];
-                const shangNajia = shangNajiaFull.slice(3, 6); // 四五上爻
-                const xiaNajiaUse = xiaNajia.slice(0, 3); // 初二三爻
-                return [...xiaNajiaUse, ...shangNajia];
-            }
-
-            // 获取日干
-            function getRiGan() {
-                const now = new Date();
-                const baseDate = new Date(2024, 0, 1); // 甲子日参考
-                const diffDays = Math.floor((now - baseDate) / (1000 * 60 * 60 * 24));
-                const ganIndex = ((diffDays % 10) + 10) % 10;
-                const ganArr = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-                return ganArr[ganIndex];
             }
 
             // ==================== 事件绑定 ====================
             $btnShake.addEventListener('click', performShake);
             $btnTimeGua.addEventListener('click', timeQiGua);
             $btnClear.addEventListener('click', clearAll);
-
-            // 键盘支持
             document.addEventListener('keydown', (e) => {
-                if (e.key === ' ' || e.code === 'Space') {
+                if ((e.key === ' ' || e.code === 'Space') && !isAnimating && currentShakeIndex < 6) {
                     e.preventDefault();
-                    if (currentShakeIndex < 6 && !$btnShake.disabled) {
-                        performShake();
-                    }
+                    performShake();
                 }
                 if (e.key === 'r' && e.ctrlKey) {
                     e.preventDefault();
@@ -1165,12 +1406,31 @@
                 }
             });
 
+            // ==================== 初始粒子背景 ====================
+            function ambientParticles() {
+                setInterval(() => {
+                    if ($particlesContainer.children.length > 30) return;
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.cssText = `
+                        left: ${Math.random()*100}vw;
+                        top: 105vh;
+                        animation: floatUp ${5+Math.random()*7}s ease-in forwards;
+                        width: ${1+Math.random()*2.5}px;
+                        height: ${1+Math.random()*2.5}px;
+                        background: rgba(200,164,92,${0.3+Math.random()*0.5});
+                    `;
+                    $particlesContainer.appendChild(p);
+                    p.addEventListener('animationend', () => p.remove());
+                }, 1800);
+            }
+            ambientParticles();
+
             // ==================== 初始化 ====================
-            console.log('🔮 六爻排盘系统已就绪');
-            console.log('  点击"摇卦"按钮或按空格键摇卦');
-            console.log('  Ctrl+R 清空重来');
-            console.log('  八卦基础：', BAGUA);
-            console.log('  64卦映射已加载，共', Object.keys(GUA64_MAP).length, '卦');
+            console.log('🔮 六爻排盘系统 v2.0 已就绪');
+            console.log('  按空格键摇卦 | Ctrl+R 清空');
+            console.log('  八卦基础已加载 | 64卦映射共', Object.keys(GUA64_MAP).length, '卦');
+            updateProgressDots();
         })();
     </script>
 </body>
